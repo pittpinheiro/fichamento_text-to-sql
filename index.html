@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fichamento | LABit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <header>
+    <div class="navbar" id="navbar">
+      <div class="logo">
+        <img src="logo.png" alt="Logo LABit">
+
+      </div>
+      <div class="menu-toggle" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#"><i data-lucide="home"></i> INICIO</a></li>
+          <li><a href="#"><i data-lucide="search"></i> PESQUISAS</a></li>
+          <li><a href="#"><i data-lucide="mail"></i> CONTATO</a></li>
+          <li><a href="#"><i data-lucide="file-text"></i> ARTIGOS</a></li>
+          <li><a href="#"><i data-lucide="users"></i> SOBRE NÓS</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="content-container">
+      <span class="breadcrumbs">
+        <a href="#">Artigos</a> / <a href="#">Fichamentos</a> / <a href="#">Engenharia de Prompt</a>
+      </span>
+
+      <h1>Análise de artigo: “How to Prompt LLMs for Text-to-SQL: A Study in Zero-shot, Single-domain, and Cross-domain Settings”</h1>
+      <p class="info">Autor: <strong>Shuaichen Chang e Eric Fosler-Lussier</strong> &nbsp;|&nbsp; Ano: <em>2025</em> &nbsp;|&nbsp; Revista: <em>NeurIPS</em></p>
+
+      <div class="article-intro">
+        <p>O artigo escrito por Shuaichen Chang e Eric Fosler-Lussier, apresentado na NeurIPS(Conferência e Workshop sobre Sistemas de Processamento de Informação Neural) no ano de 2023. Com o propósito de compreender as técnicas de construção de prompt para modelos de LLMs, avaliando e comparando as diferentes maneiras que os modelos resolvem a questão do Text-to-SQL, usando as técnicas Zero-shot, Single-domain few-shot e Cross-domain few-shot. Assim, conseguindo entender quais os componentes que mais impactam a performance de um LLM.</p>
+      </div>
+
+      <div class="section">
+        <h2>Introdução</h2>
+        <p>A publicação apresenta os modelos text-to-sql, que são os modelos que permitem com que o usuário consulte o banco de dados usando perguntas em linguagem natural, sem usar a consulta sql.  Em vez de treinamento extensivo com dados de text-to-SQL, o in-context learning permite que os LLMs convertam uma NLQ de teste em uma consulta SQL utilizando um texto de prompt. Esse prompt inclui componentes essenciais como o banco de dados de teste e a pergunta, acompanhados de zero ou alguns exemplos demonstrativos: pares NLQ-SQL correspondentes ao banco de dados de teste (caso de domínio único) ou a diferentes bancos de dados (caso de domínio cruzado).</p>
+        <br/>
+        <p>Nesse artigo, é avaliado diversas estratégias de construção de prompts em três cenários comumente utilizados no text-to-SQL: zero-shot, single-domain e cross-domain. Por meio dessa avaliação, obtiveram insights sobre a eficácia dessas estratégias de construção de prompts, como o relacionamento entre tabelas e o conteúdo das tabelas que desempenham um papel crucial para o bom desempenho dos LLMs.</p>
+      </div>
+
+      <div class="section">
+        <h2>Técnicas</h2>
+        <p>
+    Durante o artigo, o autor explora as principais técnicas de engenharia de prompt utilizadas para entrada de dados, destacando suas performances nos modelos e suas respostas geradas em diferentes contextos e objetivos. As técnicas são:
+
+  </p>
+  <div style="padding: 10px;">
+      <ul>
+    <li>
+      <strong>Zero-shot Text-to-SQL:</strong> Não utiliza exemplos de entrada, apenas a estrutura do banco e a pergunta do usuário em linguagem natural, com o objetivo de compreender e medir a capacidade do modelo na conversão de texto em SQL sem um refinamento;
+    </li>
+    <li>
+      <strong>Few-shot Text-to-SQL em Single-Domain:</strong>  Adiciona alguns exemplos de NQL para SQL do mesmo banco ao prompt, com o objetivo de dar contexto em que exemplos como os dados estão disponíveis. O artigo exemplifica usando as consultas de voo;
+    </li>
+    <li>
+      <strong>Few-shot Text-to-SQL em Cross-Domain:</strong> definição de um contexto geral e do objetivo principal da interação, geralmente configurado no início da sessão para guiar o comportamento global do modeloUtiliza alguns exemplos de diferentes bancos no banco utilizado nos testes, sendo o objetivo principal avaliar como o modelo generaliza os domínios nunca vistos.
+    </li>
+      </ul>
+
+  </div>
+        <div class="figure-container">
+          <img src="fig1.png" alt="Taxonomia dos componentes técnicos de LLMs" class="figure-image" />
+          <p class="figure-caption">Figura 1 – Exemplo de 1-shot single doamin text-to-sql. Figura 2 - alguns exemplos de diferentes esquemas de construção de banco de dados.</p>
+        </div>
+      </div>
+      <div class="section">
+        <h2>Construção do prompt</h2>
+        <p>Ao construir um prompt para tarefas que envolvem bancos de dados relacionais, a maneira como o esquema é apresentado afeta a compreensão e o desempenho do modelo de linguagem. Por esse motivo, o texto descreve algumas abordagens para representar o esquema no prompt. </p>
+          <div style="padding: 10px;">
+      <ul>
+    <li>
+      <strong>Formato simplificado por tabela:</strong> Table(Columns): Highschooler(ID, name, grade). Representa cada tabela com seus respectivos atributos de maneira compacta.
+    </li>
+    <li>
+      <strong>Formato com separação explícita de colunas:</strong> Columns=[]: Table Highschooler, Columns=[ID, name, grade]. Representa a estrutura do prompt separando claramente as tabelas e seus atributos, melhorando a legibilidade.
+    </li>
+    <li>
+      <strong>+ForeignKey:</strong>  Permite a adição de  relacionamentos entre tabelas por meio de chaves estrangeiras, fornecendo ao modelo informações sobre dependências e integridade referencial.
+    </li>
+        <li>
+      <strong>CreateTable:</strong>  Utiliza a sintaxe completa do SQL com o comando “create table”, detalhando a estrutura de cada tabela com tipos de dados e restrições. Essa abordagem aproxima o modelo de um ambiente real de manipulação de esquemas SQL.
+    </li>
+      </ul>
+      <br/>
+      <p>Além dessa representação estrutural, o texto foi normalizado, todo o texto, com exceção dos dados da tabelas, foi convertido para letras minúsculas, os espaços e quebra de linhas, padronizados. Essa normalização do texto aumenta a consistência do prompt, assim, contribuindo para a análise por parte do LLM e favorecendo uma maior adesão ao padrão da linguagem SQL.</p>
+    </div>
+      <div class="section">
+        <h2>Conteúdo do Banco</h2>
+        <p>Segundo os autores, a apresentação dos dados das tabelas no prompt influencia diretamente a capacidade dos modelos de linguagem em gerar consultas SQL otimizadas. A seguir, são descritas abordagens comuns para fornecer exemplos de dados: </p>
+          <div style="padding: 10px;">
+      <ul>
+    <li>
+      <strong>InsertRow:</strong> Utiliza comandos SQL no estilo INSERT INTO para inserir linhas manualmente. Exemplo: INSERT INTO Highschooler (ID, name, grade) VALUES (1025, 'Jordan', 9);
+    </li>
+    <li>
+      <strong>SelectRow:</strong>  Apresenta os resultados de uma consulta genérica, geralmente SELECT * FROM ... LIMIT, exibindo múltiplas linhas da tabela. Exemplo: SELECT * FROM Highschooler LIMIT 3: 1025, Jordan, 9. 1101, Gabriel, 10
+    </li>
+    <li>
+      <strong>SelectCol:</strong>  Mostra os valores distintos por coluna, o que pode ser útil para o modelo entender os domínios possíveis de cada atributo. Exemplo: ID: 1025, 1101 — name: "Jordan", "Gabriel" — grade: 9, 10
+    </li>
+  </div>
+      </ul>
+      <br/>
+      <p>A apresentação, tanto do esquema quanto dos dados, afeta direta a performace dos LLMs na geração correta de comandos SQL. Segundo o estudo, a combinação CreateTable + SelectCol, especialmente quando associadas à normalização textual, tendem a ter melhores resultados em conjecturas de zero-shot prompting. Essa combinação fornece ao modelo um entendimento estrutural completo e um mapeamento claro dos domínios de dados, sem a necessidade de exemplos adicionais no prompt.</p>
+       <div class="section">
+        <h2>Demonstrações</h2>
+        <p>Segundo o estudo, na abordagem de few-shot prompting, o modelo admite exemplos antes da tarefa principal para, aos poucos, induzir o comportamento desejado. As demonstrações podem variar em estratégia e cobertura, afetando diretamente o desempenho da geração de SQL. O objetivo de avaliar essas variações é compreender quais as estratégias de demonstração que obtêm os melhores desempenhos na tarefa de geração de SQL a partir de linguagem natural. As principais configurações utilizadas são: </p>
+          <div style="padding: 10px;">
+      <ul>
+    <li>
+      <strong>Single-domain:</strong>Os exemplos são retirados do mesmo banco de dados da tarefa-alvo. Essa estratégia tende a aumentar a coerência semântica entre exemplos e tarefa.
+    </li>
+    <li>
+      <strong>Cross-domain:</strong>  Os exemplos provêm de outros bancos de dados distintos do alvo. Essa abordagem avalia a generalização do modelo e sua capacidade de transferir padrões aprendidos.
+    </li>
+    <li>
+      <strong>Variações:</strong> Utilização de um único banco com múltiplos exemplos, favorecendo a consistência interna e múltiplos bancos com um ou mais exemplos cada, explorando maior diversidade estrutural e semântica.
+    </li>
+  </div>
+    <div>
+    <h2>Experimentos</h2>
+        <p>Para avaliar a eficácia das diferentes abordagens de prompting, foram conduzidos experimentos com os seguintes parâmetros:</p>
+          <div style="padding: 10px;">
+        <ul>
+    <li>
+      <strong>Dataset:</strong>Utilizou-se o Spider, benchmark amplamente adotado para tarefas de Text-to-SQL, que envolve perguntas complexas em múltiplos esquemas de banco de dados relacionais.
+    </li>
+    <li>
+      <strong>Modelos testados:</strong>  Codex (code-davinci-002), modelo da OpenAI especializado em tarefas de geração de código. ChatGPT (gpt-3.5-turbo / 16k), modelo versátil com suporte a contexto estendido.
+    </li>
+    <li>
+      <strong>Métrica de avaliação:</strong> Execution Accuracy (EX), este verifica se a consulta SQL gerada retorna o mesmo resultado que a query correta, independentemente da estrutura textual. Essa métrica foca na eficácia prática da consulta e é mais robusta que métricas puramente sintáticas como Exact Match.
+      </ul>
+    </div>
+    <div>
+      <h2>Resultados</h2>
+        <p>Em Zero-shot Prompting, foi observado que a maneira de apresentação do esquema e dos dados influencia diretamente a geração de consultas SQL. O uso de CreateTable + SelectCol demonstrou resultados superiores em comparação ao formato simplificado Columns=[], com um ganho médio de aproximadamente 5% na Execution Accuracy (EX). A inclusão da definição formal da tabela (CREATE TABLE) unido aos domínios dos valores por coluna (SelectCol) proporcionou ao modelo um contexto mais estruturado, favorecendo a geração correta de queries. Além de que a aplicação de técnicas de normalização de texto impactou positivamente a consistência e precisão das respostas, reduzindo a ambiguidade no processo de entrada pelo LLM, assim, contribuindo para uma maior estabilidade na interpretação do prompt. A respeito da adição de relações implícitas, foi demonstrado a capacidade de inferir relações entre tabelas, ainda que sem exemplos explícitos, desde que o esquema estivesse bem definido, o que reforçou, para os pesquisadores, a importância e uma boa representação estrutural em zero-shot. O que sugeriu aos autores que, mesmo sem demonstrações explicitas, é possível alcançar desempenhos competitivos com LLMs, desde que o prompt seja muito bem estruturado e formatado.</p>
+        <br/>
+        <p>Já a respeito de Few-shot Prompting, em Single-domain, os experimentos com exemplos do mesmo banco de dados de tarefas, também chamados de in domain, foi observado uma melhoria progressiva na precisão à medida que mais exemplos eram incluídos no prompt. Esse aumento da exposição a exemplos específicos favorece a generalização sem erros do modelo sobre a estrutura e os padrões das consultas esperadas. Com poucos exemplos, as relações entre tabelas ainda exercem papel importante, porém, conforme o número de exemplos aumenta, a dependência dessas relações diminui, mas o conteúdo ainda é preservado e essencial. Notaram também que a diferença entre os formatos de dados (como InsertRow, SelectRow e SelectCol) reduz com o aumento do número de exemplos, indicando que a presença de exemplos em si se torna o fator dominante, independentemente da forma exata de apresentação.</p>
+        <br/>
+        <p>No cenário com exemplos de bancos distintos, chamado de Cross-domain, a performance do modelo tende a ser inferior ao ser comparada à abordagem anterior, em destaque se o prompt for excessivamente extenso. Enquanto as demonstrações eram realizadas, identificaram um ponto ideal de comprimento do prompt em cada um dos modelos. Para o modelo Codex, o desempenho máximo foi alcançado com prompts de até aproximadamente 5.500 tokens. Enquanto para o ChatGPT-3.5-turbo (16K), esse limite foi estendido para cerca de 11.000 tokens. Quando esse limite é excedido, a performance começa a decair, provavelmente devido à saturação do contexto ou perda de foco no objetivo principal da tarefa. Em prompts com exemplos de outros bancos, as representações ricas, aquelas que incluem conteúdo e relações explícitas, permaneceram fundamentais, uma vez que o modelo não tem acesso direto à estrutura do banco de teste.</p>
+      </div>
+       <div>
+      <h2>Conclusão</h2>
+        <p>A conclusão do estudo foi que os resultados obtidos reforçaram alguns princípios fundamentais para a construção de prompts eficazes em tarefas de Text-to-SQL com LLMs, como as representações explícitas dos conteúdos e das relações entre tabelas que demonstrou ser um ponto crítico para o melhor resultado na geração de queries, principalmente em zero-shot. Além do mais, comprovar que a inclusão de exemplos melhora significativamente a performance, porém sem substituir o conhecimento estrutural explícito dos dados. Também que os modelos são altamente sensíveis ao formato e estrutura do prompt com variações notórias do desempenho dependendo do uso de certas técnicas, como CreateTable, SelectCOl, entre outros. Por fim, provar a existência de uma zona de comprimento do prompt para que seja processado e que extrapolá-la compromete diretamente a eficácia da geração, mesmo em modelos como o ChatGPT-16k. Toda essa pesquisa evidenciou como a engenharia de prompt para tarefas estruturadas exige um equilíbrio entre a coesão, clareza e cobertura, sendo necessário a adaptação de estratégias conforme o modelo utilizado e o domínio de sua aplicação.</p>
+        </div>
+
+  </div>
+     
+
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p>© 2025 LABit. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('navbar').classList.toggle('active');
+    }
+    lucide.createIcons();
+  </script>
+</body>
+</html>
